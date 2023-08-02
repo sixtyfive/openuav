@@ -5,7 +5,8 @@
 #include "adc.h"
 #include "stdio.h"
 
-#define CELL_COUNT 4.f
+// sixtyfive: 2 and 3 on Toad of Death
+#define CELL_COUNT 3.f
 
 void send_msp(uint8_t command, uint8_t *payload, uint8_t length) {
   uint8_t checksum = 0;

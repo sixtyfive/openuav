@@ -27,15 +27,20 @@
 #define RATE 6.0f
 
 // These are regular PI gains
-#define RATE_P 0.25f
-#define RATE_I 0.0002f
+// catphish: The 10 inch used RATE_P=0.25 and RATE_ZP=1.0
+// catphish: 0.1 is kind of a minimum (my 5 inch is powerful so needs low values)
+#define RATE_P 0.1f
+#define RATE_I 0.0001f
 
 // These are the PI gains for the Z axis.
-#define RATE_ZP 1.0f
-#define RATE_ZI 0.0008f
+// change here to influence yaw ... higher number = bigger effect
+#define RATE_ZP 0.3f
+#define RATE_ZI 0.0003f
 
 // THROTGAIN is a throttle multiplier. Useful values are between 0.5 and 1.0
-#define THROTGAIN 0.8f
+// catphish: Currently I use 50% throttle ("820)/2") and add 200 for "air mode".
+// sixtyfive: Puny 1104 motors on a beefy 3" frame mean I need to keept it at 100%.
+#define THROTGAIN 1.f
 // AIRBOOST is a minimum throttle to be applied when the quad is armed.
 #define AIRBOOST 200
 
@@ -80,6 +85,9 @@ int32_t gps_zero_lon = 0;
 char osd_mv[10];
 
 int main(void) {
+  // Say hello
+  led0_on();
+  // The wheels on the bus go round and round, round and round...
   while(1) {
     // Poll the USB peripherand to transmit and receive data.
     usb_main();
@@ -207,10 +215,12 @@ int main(void) {
       i_yaw   += RATE_ZI * (gyro.z + rotation_request_yaw);
 
       // Set the throttle. This will ultimately use the controller input, altitude, and attitude.
+
       // Currently I use 50% throttle and add 200 for "air mode".
       int32_t throttle = THROTGAIN * (elrs_channel(2) + 820) + AIRBOOST;
 
       // TODO: This should be configurable.
+      // sixtyfive: Toad of Death has PROPS_IN
       #define PROPS_IN
 
       // For each motor, add all appropriate terms together to get the final output.
@@ -229,10 +239,17 @@ int main(void) {
       #endif
 
       // Configure motor mappings
-      dshot.motor1 = motor_front_left;
+      // To figure out things, look at error_x and error_y, not at ix and iy!
+      // If you don't know anything and you're too tired to use your brain:
+      // - assign '+error_x +error_y' to rear-left
+      // - assign '-error_x -error_y' to front-right
+      // - trial-and-error the other two out
+      // - if yaw needs swapping as a last step, swap all the error_z & iz signs above
+      // On The Toad of Death:
+      dshot.motor1 = motor_rear_right;
       dshot.motor2 = motor_front_right;
       dshot.motor3 = motor_rear_left;
-      dshot.motor4 = motor_rear_right;
+      dshot.motor4 = motor_front_left;
 
       // Write the motor outputs to the ESCs.
       dshot_write(&dshot);
