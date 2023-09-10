@@ -1,0 +1,25 @@
+            TUNING
+            P: 180
+            I: 90
+            D: 25
+        Yaw P: 230
+        Yaw I: 230
+
+           CONTROL
+    Acro Rate: 667
+   Angle Rate: 667
+         Expo: 25
+     Yaw Expo: 30
+Throttle Gain: 80
+ Throttle Min: 100
+
+            MOTOR
+       Motor1: 4
+       Motor2: 2
+       Motor3: 1
+       Motor4: 3
+    Direction: 0
+
+            BATTERY
+    ADC Coeff: 840
+   Cell Count: 3
